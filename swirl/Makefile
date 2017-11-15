@@ -19,10 +19,10 @@ main: main.cpp
 	g++ -std=c++11 $(INC_DIRS) $(LIB_DIRS) $< $(LIBS) -o $@
 
 main_omp: main.cpp
-	g++ -std=c++11 -fopenmp $(INC_DIRS) $(LIB_DIRS) $< $(LIBS) -o $@
+	g++ -std=c++11 -fopenmp -DOMP $(INC_DIRS) $(LIB_DIRS) $< $(LIBS) -o $@
 
 main_cuda: main.cpp kernel.cu
 	nvcc -DCUDA $(NVCC_OPTIONS) $(INC_DIRS) $(LIB_DIRS) $^ $(LIBS) -o $@
 
 clean:
-	rm main main_omp main_cuda
+	rm main main_omp main_cuda *twisted*

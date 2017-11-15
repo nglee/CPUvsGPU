@@ -8,8 +8,8 @@
  * Contact : lee.namgoo@sualab.com
  */
 
-#include <sstream>
-#include <iomanip>
+#include <stdio.h>
+#include <chrono>
 
 #include <opencv2/opencv.hpp>
 
@@ -80,21 +80,34 @@ void swirl(cv::Mat& img, double factor)
 
 int main()
 {
-    ostringstream oss;
-    for (int i = 0; i < 16; i++) {
-        oss = ostringstream {ios::ate};
-        oss << "../images/" << setw(8) << setfill('0') << right << i << ".jpg";
-        cv::Mat h_img = cv::imread(oss.str());
-        if (h_img.size() == cv::Size {0, 0})
-            continue;
+    for (int i = 0; i < 8; i++) {
+
+        char path[100];
+        snprintf(path, 100, "../images/%08d.jpg", i);
+
+        cv::Mat h_img = cv::imread(path);
+
+        auto start_clk = std::chrono::high_resolution_clock::now();
+
 #ifdef CUDA
         swirl_cuda_wrapper(h_img, 0.005f);
-        oss << ".twisted.cuda.bmp";
+        snprintf(path, 100, "./%08d.twisted.cuda.jpg", i);
 #else
         swirl(h_img, 0.005f);
-        oss << ".twisted.omp.bmp";
+#  ifdef OMP
+        snprintf(path, 100, "./%08d.twisted.omp.jpg", i);
+#  else
+        snprintf(path, 100, "./%08d.twisted.jpg", i);
+#  endif
 #endif
-        cv::imwrite(oss.str(), h_img);
+
+        auto end_clk = std::chrono::high_resolution_clock::now();
+
+        printf("(%d) %10.4f ms - image size (%d, %d)\n", i,
+               std::chrono::duration<float, std::milli>(end_clk - start_clk).count(),
+               h_img.cols, h_img.rows);
+
+        cv::imwrite(path, h_img);
     }
 
     return 0;

@@ -118,21 +118,21 @@ int main()
         oil_cuda_wrapper(img, RADIUS, INTENSITY_LEVEL);
 #  ifdef CUDA_SECOND_VERSION
         snprintf(path, 100, "./%08d.oil.cuda.second.jpg", i);
-#  else     // !CUDA_SECOND_VERSION
+#  else  // !CUDA_SECOND_VERSION
 #    ifdef CUDA_SHARED
         snprintf(path, 100, "./%08d.oil.cuda.shared.jpg", i);
-#    else       // !CUDA_SHARED
+#    else  // !CUDA_SHARED
         snprintf(path, 100, "./%08d.oil.cuda.jpg", i);
-#    endif      // !CUDA_SHARED
-#  endif    // !CUDA_SECOND_VERSION
-#else   // !CUDA
+#    endif // !CUDA_SHARED
+#  endif // !CUDA_SECOND_VERSION
+#else  // !CUDA
         oil(img, RADIUS, INTENSITY_LEVEL);
 #  ifdef OMP
         snprintf(path, 100, "./%08d.oil.omp.jpg", i);
-#  else     // !OMP
+#  else  // !OMP
         snprintf(path, 100, "./%08d.oil.jpg", i);
-#  endif    // !OMP
-#endif  // !CUDA
+#  endif // !OMP
+#endif // !CUDA
 
         auto end_clk = std::chrono::high_resolution_clock::now();
 
