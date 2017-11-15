@@ -29,8 +29,8 @@ void swirl(cv::Mat& img, double factor)
     int width = img.cols;
     int height = img.rows;
 
-    double cX = (double)width/2.0f;
-    double cY = (double)height/2.0f;
+    double cX = (double)width / 2.0;
+    double cY = (double)height / 2.0;
 
     cv::Mat img_copy = img;
     img_copy = img_copy.clone(); // deep copy

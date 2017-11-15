@@ -1,5 +1,4 @@
-/*
- * Algorithm and original cpu code are from "supercomputingblog.com".
+/* Algorithm and original cpu code are from "supercomputingblog.com".
  * (http://supercomputingblog.com/graphics/oil-painting-algorithm/)
  *
  * Modified to work with OpenCV
@@ -32,8 +31,7 @@ void oil(cv::Mat& img, const int radius, const int intensity_level)
     int width = img.cols;
     int height = img.rows;
 
-    cv::Mat img_copy = img;
-    img_copy = img_copy.clone(); // deep copy
+    cv::Mat img_copy = img.clone(); // deep copy
 
     #pragma omp parallel for
     for (int i = 0; i < height; i++)
