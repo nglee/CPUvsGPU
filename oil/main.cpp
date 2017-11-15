@@ -106,7 +106,7 @@ int main()
     for (int i = 0; i < 8; i++) {
 
         char path[100];
-        snprintf(path, 100, "../images/%08d.jpg", i);
+        snprintf(path, 100, "../images/%02d.jpg", i);
 
         cv::Mat img = cv::imread(path);
 
@@ -115,20 +115,20 @@ int main()
 #ifdef CUDA
         oil_cuda_wrapper(img, RADIUS, INTENSITY_LEVEL);
 #  ifdef CUDA_SECOND_VERSION
-        snprintf(path, 100, "./%08d.oil.cuda.second.jpg", i);
+        snprintf(path, 100, "./%02d.oil.cuda.second.jpg", i);
 #  else  // !CUDA_SECOND_VERSION
 #    ifdef CUDA_SHARED
-        snprintf(path, 100, "./%08d.oil.cuda.shared.jpg", i);
+        snprintf(path, 100, "./%02d.oil.cuda.shared.jpg", i);
 #    else  // !CUDA_SHARED
-        snprintf(path, 100, "./%08d.oil.cuda.jpg", i);
+        snprintf(path, 100, "./%02d.oil.cuda.jpg", i);
 #    endif // !CUDA_SHARED
 #  endif // !CUDA_SECOND_VERSION
 #else  // !CUDA
         oil(img, RADIUS, INTENSITY_LEVEL);
 #  ifdef OMP
-        snprintf(path, 100, "./%08d.oil.omp.jpg", i);
+        snprintf(path, 100, "./%02d.oil.omp.jpg", i);
 #  else  // !OMP
-        snprintf(path, 100, "./%08d.oil.jpg", i);
+        snprintf(path, 100, "./%02d.oil.jpg", i);
 #  endif // !OMP
 #endif // !CUDA
 
