@@ -1,9 +1,6 @@
 /*
  * Algorithm copied from "supercomputingblog.com".
  * (http://supercomputingblog.com/openmp/image-twist-and-swirl-algorithm/2/)
- *
- * Author  : nglee
- * Contact : lee.namgoo@sualab.com
  */
 
 #include <cuda_runtime.h>

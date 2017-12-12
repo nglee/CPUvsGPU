@@ -2,9 +2,6 @@
  * (http://supercomputingblog.com/graphics/oil-painting-algorithm/)
  *
  * Modified to work with OpenCV
- *
- * Author : nglee
- * E-mail : lee.namgoo@sualab.com
  */
 
 #include <stdio.h>

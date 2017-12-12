@@ -3,9 +3,6 @@
  * (http://supercomputingblog.com/openmp/image-twist-and-swirl-algorithm/2/)
  *
  * Modified to work with OpenCV, OpenMP
- *
- * Author  : nglee
- * Contact : lee.namgoo@sualab.com
  */
 
 #include <stdio.h>

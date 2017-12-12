@@ -1,9 +1,6 @@
 /*
  * Algorithm is from "supercomputingblog.com".
  * (http://supercomputingblog.com/graphics/oil-painting-algorithm/)
- *
- * Author : nglee
- * E-mail : lee.namgoo@sualab.com
  */
 
 #include <cuda_runtime.h>

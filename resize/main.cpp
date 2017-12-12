@@ -1,8 +1,3 @@
-/*
- * Author : nglee
- * E-mail : lee.namgoo@sualab.com
- */
-
 #include <stdio.h>
 #include <chrono>
 

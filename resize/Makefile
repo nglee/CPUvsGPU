@@ -1,23 +1,15 @@
-#
-#  Author : nglee
-#  E-mail : lee.namgoo@sualab.com
-#
-
-INCDIRS=
-
-LIBDIRS=
-
-LIBS=-lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_gpu
-
-.PHONY: all clean
+LDLIBS=-lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_gpu
 
 all: main main_cuda
 
 main: main.cpp
-	g++ -std=c++11 $(INCDIRS) $(LIBDIRS) $< $(LIBS) -o $@
+	g++ -std=c++11 $^ $(LDLIBS) -o $@
 
 main_cuda: main.cpp
-	g++ -std=c++11 $(INCDIRS) $(LIBDIRS) $< $(LIBS) -o $@ -DCUDA
+	g++ -std=c++11 $^ $(LDLIBS) -o $@ -DCUDA
 
 clean:
-	rm main main_cuda *resized*
+	rm -f main main_cuda *resized*
+
+.PHONY: all clean
+
