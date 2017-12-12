@@ -1,1 +1,6 @@
 *.jpg
+main
+main_omp
+main_cuda
+main_cuda_shared
+main_cuda_second
