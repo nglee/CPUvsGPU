@@ -8,7 +8,7 @@
 
 #include <stdio.h>
 
-#define C_PI 3.141592653589793238462643383279502884197169399375
+#define C_PI 3.141592653589793238462643383279502884197169399375f
 
 static inline void _safe_cuda_call(cudaError err, const char* msg, const char* file_name, const int line_number)
 {
@@ -22,8 +22,8 @@ static inline void _safe_cuda_call(cudaError err, const char* msg, const char* f
 #define SAFE_CUDA_CALL(call,msg) _safe_cuda_call((call),(msg),__FILE__,__LINE__)
 
 __global__ void
-swirl_cuda(unsigned char* img, unsigned char* img_copy, int step, int width, int height,
-        double cX, double cY, double factor)
+swirl_cuda(unsigned char* img, const unsigned char* img_copy, const int step, const int width,
+           const int height, const float cX, const float cY, const float factor)
 {
     int i = blockIdx.y * blockDim.y + threadIdx.y;
     int j = blockIdx.x * blockDim.x + threadIdx.x;
@@ -31,13 +31,13 @@ swirl_cuda(unsigned char* img, unsigned char* img_copy, int step, int width, int
     if (i >= height || j >= width)
         return;
 
-    double relY = cY - i;
-    double relX = j - cX;
+    float relY = cY - i;
+    float relX = j - cX;
 
-    double originalAngle;
+    float originalAngle;
 
     if (relX != 0) {
-        originalAngle = atan(abs(relY)/abs(relX));
+        originalAngle = atanf(abs(relY)/abs(relX));
         if (relX > 0 && relY < 0) originalAngle = 2.0f * C_PI - originalAngle;
         else if (relX < 0 && relY >= 0) originalAngle = C_PI - originalAngle;
         else if (relX < 0 && relY < 0) originalAngle += C_PI;
@@ -46,13 +46,14 @@ swirl_cuda(unsigned char* img, unsigned char* img_copy, int step, int width, int
         else originalAngle = 1.5f * C_PI;
     }
 
-    double radius = sqrt(relX * relX + relY * relY);
+    float radius = sqrtf(relX * relX + relY * relY);
+    float radius_full = sqrtf(cX * cX + cY * cY);
 
-    //double newAngle = originalAngle + 1/(factor * radius + (4.0f / C_PI));
-    double newAngle = originalAngle + factor * radius;
+    //float newAngle = originalAngle + 1/(factor * radius + (4.0f / C_PI));
+    float newAngle = originalAngle + factor * radius / radius_full;
 
-    int srcX = (int)(floor(radius * cos(newAngle) + 0.5f));
-    int srcY = (int)(floor(radius * sin(newAngle) + 0.5f));
+    int srcX = radius * cos(newAngle) + 0.5f;
+    int srcY = radius * sin(newAngle) + 0.5f;
 
     srcX += cX;
     srcY += cY;
@@ -68,13 +69,13 @@ swirl_cuda(unsigned char* img, unsigned char* img_copy, int step, int width, int
     img[i * step + 3 * j + 2] = img_copy[srcY * step + 3 * srcX + 2];
 }
 
-void swirl_cuda_wrapper(cv::Mat& img, double factor)
+void swirl_cuda_wrapper(cv::Mat& img, float factor)
 {
     int width = img.cols;
     int height = img.rows;
 
-    double cX = (double)width/2.0f;
-    double cY = (double)height/2.0f;
+    float cX = (width - 1) / 2.0f;
+    float cY = (height - 1) / 2.0f;
 
     unsigned char* d_img;
     unsigned char* d_img_copy;

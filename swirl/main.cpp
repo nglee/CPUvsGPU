@@ -14,36 +14,35 @@
 #  include <omp.h>
 #endif
 
-#define C_PI 3.141592653589793238462643383279502884197169399375
+#define C_PI 3.141592653589793238462643383279502884197169399375f
 
 using namespace std;
 
 #ifdef CUDA
-extern void swirl_cuda_wrapper(cv::Mat& img, double factor);
+extern void swirl_cuda_wrapper(cv::Mat& img, float factor);
 #else
-void swirl(cv::Mat& img, double factor)
+void swirl(cv::Mat& img, float factor)
 {
     int width = img.cols;
     int height = img.rows;
 
-    double cX = (double)width / 2.0;
-    double cY = (double)height / 2.0;
+    float cX = (width - 1) / 2.0f;
+    float cY = (height - 1) / 2.0f;
 
-    cv::Mat img_copy = img;
-    img_copy = img_copy.clone(); // deep copy
+    cv::Mat img_copy = img.clone();
 
     #pragma omp parallel for
     for (int i = 0; i < height; i++) {
 
-        double relY = cY - i;
+        float relY = cY - i;
         for (int j = 0; j < width; j++) {
 
-            double relX = j - cX;
+            float relX = j - cX;
 
-            double originalAngle;
+            float originalAngle;
 
             if (relX != 0) {
-                originalAngle = atan(abs(relY)/abs(relX));
+                originalAngle = atanf(abs(relY)/abs(relX));
                 if (relX > 0 && relY < 0) originalAngle = 2.0f * C_PI - originalAngle;
                 else if (relX < 0 && relY >= 0) originalAngle = C_PI - originalAngle;
                 else if (relX < 0 && relY < 0) originalAngle += C_PI;
@@ -52,13 +51,14 @@ void swirl(cv::Mat& img, double factor)
                 else originalAngle = 1.5f * C_PI;
             }
 
-            double radius = sqrt(relX * relX + relY * relY);
+            float radius = sqrtf(relX * relX + relY * relY);
+            float radius_full = sqrtf(cX * cX + cY * cY);
 
-            //double newAngle = originalAngle + 1/(factor * radius + (4.0f / C_PI));
-            double newAngle = originalAngle + factor * radius;
+            //float newAngle = originalAngle + 1/(factor * radius + (4.0f / C_PI));
+            float newAngle = originalAngle + factor * radius / radius_full;
 
-            int srcX = (int)(floor(radius * cos(newAngle) + 0.5f));
-            int srcY = (int)(floor(radius * sin(newAngle) + 0.5f));
+            int srcX = radius * cos(newAngle) + 0.5f;
+            int srcY = radius * sin(newAngle) + 0.5f;
 
             srcX += cX;
             srcY += cY;
@@ -87,10 +87,10 @@ int main()
         auto start_clk = std::chrono::high_resolution_clock::now();
 
 #ifdef CUDA
-        swirl_cuda_wrapper(h_img, 0.005f);
+        swirl_cuda_wrapper(h_img, 2.f);
         snprintf(path, 100, "./%02d.twisted.cuda.jpg", i);
 #else
-        swirl(h_img, 0.005f);
+        swirl(h_img, 2.f);
 #  ifdef OMP
         snprintf(path, 100, "./%02d.twisted.omp.jpg", i);
 #  else
