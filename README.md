@@ -2,7 +2,9 @@
 To study execution speed difference between CPU and GPU.
 
 ### Notes
-Tested on NVIDIA Jetson TX1 Development Kit.
+Tested on NVIDIA Jetson TX1 Development Kit with JetPack 3.1.
+
+Run `make` to compile and `test.sh` to compare execution speed.
 
 ### Descriptions
 
