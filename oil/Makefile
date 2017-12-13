@@ -1,27 +1,34 @@
-LDLIBS=-lopencv_core -lopencv_highgui
-CXXFLAGS=-std=c++11 -O2
-NVCCFLAGS=-arch=sm_53 -ccbin=g++ -std=c++11 -O2
-TARGETS=main main_omp main_cuda main_cuda_shared main_cuda_second
+CXX			= g++
+NVCC		= nvcc
+
+CXXFLAGS	= -std=c++11 -O2
+CUFLAGS		= -arch=sm_53 -ccbin=g++ -std=c++11 -O2
+
+LDLIBS		= -lopencv_core -lopencv_highgui
+
+OUTDIR		= ../out/oil
+OBJECTS		= oil_CPU oil_CPU_OMP oil_CUDA oil_CUDA_SHARED oil_CUDA_SECOND test.sh
+TARGETS 	= $(OBJECTS:%=$(OUTDIR)/%)
 
 all: $(TARGETS)
 
-main: main.cpp
-	g++ $(CXXFLAGS) $^ $(LDLIBS) -o $@
+$(OUTDIR)/oil_CPU: main.cpp
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDLIBS)
 
-main_omp: main.cpp
-	g++ $(CXXFLAGS) -fopenmp -DOMP $^ $(LDLIBS) -o $@
+$(OUTDIR)/oil_CPU_OMP: main.cpp
+	$(CXX) -DOMP $(CXXFLAGS) -fopenmp -o $@ $^ $(LDLIBS)
 
-main_cuda: main.cpp kernel.cu
-	nvcc -DCUDA $(NVCCFLAGS) $^ $(LDLIBS) -o $@
+$(OUTDIR)/oil_CUDA: main.cpp kernel.cu
+	nvcc $(CUFLAGS) -DCUDA -o $@ $^ $(LDLIBS)
 
-main_cuda_shared: main.cpp kernel.cu
-	nvcc -DCUDA -DCUDA_SHARED $(NVCCFLAGS) $^ $(LDLIBS) -o $@
+$(OUTDIR)/oil_CUDA_SHARED: main.cpp kernel.cu
+	nvcc $(CUFLAGS) -DCUDA -DCUDA_SHARED -o $@ $^ $(LDLIBS)
 
-main_cuda_second: main.cpp kernel.cu
-	nvcc -DCUDA -DCUDA_SECOND_VERSION $(NVCCFLAGS) $^ $(LDLIBS) -o $@
+$(OUTDIR)/oil_CUDA_SECOND: main.cpp kernel.cu
+	nvcc $(CUFLAGS) -DCUDA -DCUDA_SECOND_VERSION -o $@ $^ $(LDLIBS)
 
-clean:
-	rm -f $(TARGETS) *oil*
+$(OUTDIR)/test.sh: test.sh
+	cp test.sh $(OUTDIR)
 
-.PHONY: all clean
+.PHONY: all
 

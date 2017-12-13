@@ -80,7 +80,7 @@ int main()
     for (int i = 0; i < 8; i++) {
 
         char path[100];
-        snprintf(path, 100, "../images/%02d.jpg", i);
+        snprintf(path, 100, "../../images/%02d.jpg", i);
 
         cv::Mat h_img = cv::imread(path);
 
@@ -88,13 +88,13 @@ int main()
 
 #ifdef CUDA
         swirl_cuda_wrapper(h_img, 2.f);
-        snprintf(path, 100, "./%02d.twisted.cuda.jpg", i);
+        snprintf(path, 100, "./swirl_%02d_CUDA.jpg", i);
 #else
         swirl(h_img, 2.f);
 #  ifdef OMP
-        snprintf(path, 100, "./%02d.twisted.omp.jpg", i);
+        snprintf(path, 100, "./swirl_%02d_CPU_OMP.jpg", i);
 #  else
-        snprintf(path, 100, "./%02d.twisted.jpg", i);
+        snprintf(path, 100, "./swirl_%02d_CPU.jpg", i);
 #  endif
 #endif
 

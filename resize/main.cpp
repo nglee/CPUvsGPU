@@ -12,7 +12,7 @@ int main()
     for (int i = 0; i < 8; i++) {
 
         char path[100];
-        snprintf(path, 100, "../images/%02d.jpg", i);
+        snprintf(path, 100, "../../images/%02d.jpg", i);
 
         cv::Mat h_img = cv::imread(path);
         cv::Mat h_resized;
@@ -32,7 +32,7 @@ int main()
                std::chrono::duration<float, std::milli>(end_clk - start_clk).count(),
                d_src.cols, d_src.rows, d_dst.cols, d_dst.rows);
 
-        snprintf(path, 100, "./%02d.resized.gpu.jpg", i);
+        snprintf(path, 100, "./resized_%02d_CUDA.jpg", i);
 #else
         auto start_clk = std::chrono::high_resolution_clock::now();
         cv::resize(h_img, h_resized, cv::Size(), 1.2, 1.2, CV_INTER_CUBIC);
@@ -42,7 +42,7 @@ int main()
                std::chrono::duration<float, std::milli>(end_clk - start_clk).count(),
                h_img.cols, h_img.rows, h_resized.cols, h_resized.rows);
 
-        snprintf(path, 100, "./%02d.resized.cpu.jpg", i);
+        snprintf(path, 100, "./resized_%02d_CPU.jpg", i);
 #endif
 
         cv::imwrite(path, h_resized);

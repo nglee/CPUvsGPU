@@ -1,15 +1,23 @@
-LDLIBS=-lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_gpu
+CXX			= g++
 
-all: main main_cuda
+CXXFLAGS	= -std=c++11 -O2
 
-main: main.cpp
-	g++ -std=c++11 $^ $(LDLIBS) -o $@
+LDLIBS		=-lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_gpu
 
-main_cuda: main.cpp
-	g++ -std=c++11 $^ $(LDLIBS) -o $@ -DCUDA
+OUTDIR		= ../out/resize
+OBJECTS		= resize_CPU resize_CUDA test.sh
+TARGETS 	= $(OBJECTS:%=$(OUTDIR)/%)
 
-clean:
-	rm -f main main_cuda *resized*
+all: $(TARGETS)
 
-.PHONY: all clean
+$(OUTDIR)/resize_CPU: main.cpp
+	g++ $(CXXFLAGS) $^ $(LDLIBS) -o $@
+
+$(OUTDIR)/resize_CUDA: main.cpp
+	g++ -DCUDA $(CXXFLAGS) $^ $(LDLIBS) -o $@ -DCUDA
+
+$(OUTDIR)/test.sh: test.sh
+	cp test.sh $(OUTDIR)
+
+.PHONY: all
 
